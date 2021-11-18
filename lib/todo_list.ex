@@ -19,7 +19,7 @@ defmodule TodoList do
   end
 
   def update_entry(todo_list, entry_id, updater_fun) do
-    case Map.fetch(todo_list, entry_id) do
+    case Map.fetch(todo_list.entries, entry_id) do
       :error ->
         todo_list
 
