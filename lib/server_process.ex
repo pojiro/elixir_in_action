@@ -44,31 +44,33 @@ defmodule ServerProcess do
 end
 
 defmodule KeyValueStore do
+  use GenServer
+
   def start do
-    ServerProcess.start(KeyValueStore)
+    GenServer.start(KeyValueStore, nil)
   end
 
   def put(pid, key, value) do
-    ServerProcess.cast(pid, {:put, key, value})
+    GenServer.cast(pid, {:put, key, value})
   end
 
   def get(pid, key) do
-    ServerProcess.call(pid, {:get, key})
+    GenServer.call(pid, {:get, key})
   end
 
-  def init do
-    %{}
+  def init(_) do
+    {:ok, %{}}
   end
 
-  def handle_call({:put, key, value}, state) do
-    {:ok, Map.put(state, key, value)}
+  def handle_call({:put, key, value}, _, state) do
+    {:reply, Map.put(state, key, value)}
   end
 
-  def handle_call({:get, key}, state) do
-    {Map.get(state, key), state}
+  def handle_call({:get, key}, _, state) do
+    {:reply, Map.get(state, key), state}
   end
 
   def handle_cast({:put, key, value}, state) do
-    Map.put(state, key, value)
+    {:noreply, Map.put(state, key, value)}
   end
 end
